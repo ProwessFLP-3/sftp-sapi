@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="deliveryorder-files-process" doc:id="2134f9a0-d740-4253-af25-254453392f06" >
+		<sftp:listener doc:name="Read Delivery Order File" doc:id="4bbd95c2-8bb1-4a47-ae90-7528dd199a96" config-ref="SFTP_VV_Config" directory="${sftpvv.filePathRead}" autoDelete="true" moveToDirectory="${sftpvv.filePathSuccess}" renameTo='#[(attributes.fileName splitBy ("."))[0] as String ++ now() as String {format:"-yyyyMMddHHmmss"} ++ "." ++ (attributes.fileName splitBy ("."))[1] as String]'>
+			<scheduling-strategy >
+				<fixed-frequency frequency="${onNewOrUpdateFile.frequency}" timeUnit="MINUTES" />
+			</scheduling-strategy>
+			<sftp:matcher/>
+		</sftp:listener>
+		<ee:transform doc:name="logger inputPayload" doc:id="2182e039-c301-4b4c-b1de-dd0a46aa4f8f" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable resource="dwl/file-inputPayload.dwl" variableName="inputPayload" />
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="mile-log:request-received" doc:id="28633a31-e75b-4ce6-ac08-4e1f346127d8" name="mile-log:request-received" />
+		<flow-ref doc:name="mile-log:payload-logger" doc:id="5c64b339-6ecc-4d0c-b82a-4c3e19f50eea" name="mile-log:payload-logger" />
+		<ee:transform doc:name="Csv To Json" doc:id="19e6da08-680c-48f4-bc90-c85b3bf67e1d">
+			<ee:message>
+				<ee:set-payload resource="dwl/file-csv-to-json.dwl" />
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Set orders-papi Mapping" doc:id="5f92289a-a072-4de7-971f-8e69ad681695">
+			<ee:message>
+				<ee:set-payload resource="dwl/file-set-orders-papi-request.dwl" />
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="mile-log:payload-logger" doc:id="bb2fd937-78d1-4884-a6fb-1310c9f8f05d" name="mile-log:payload-logger" />
+		<flow-ref doc:name="mile-log:request-sent" doc:id="0912c924-3d3e-4677-8660-253836ee7b6a" name="mile-log:request-sent" />
+		<flow-ref doc:name="mile-log:payload-logger" doc:id="8fb42382-bfad-40ea-ad35-19e25aa6ed93" name="mile-log:payload-logger" />
+		<http:request method="POST" doc:name="Orders-papi Request" doc:id="bf0ff11b-0c3d-467a-abb2-3d4057974a75" config-ref="orders-papi-http" path="/${httpRequest.pathDeliveryOrders}" responseTimeout="${httpRequest.responseTimeout}">
+			<reconnect frequency="${httpRequest.frequency}" count="${httpRequest.retryCount}"/>
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	correlationId : vars.correlationId
+}]]]></http:headers>
+		</http:request>
+		<flow-ref doc:name="mile-log:payload-logger" doc:id="452020a4-34e4-4bd6-9872-c034ddac8708" name="mile-log:payload-logger" />
+		<ee:transform doc:name="logger inputPayload" doc:id="a9f3938f-74e5-4c2a-8035-9680cdf22e33">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable resource="dwl/file-inputPayload-success-response-received.dwl" variableName="inputPayload" />
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Set Response" doc:id="3f733105-26f9-4421-abd9-1c23e0eadeb5">
+			<ee:message>
+				<ee:set-payload resource="dwl/file-success-response.dwl" />
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="mile-log:payload-logger" doc:id="d7dec916-a7c5-4cb8-b242-703074a4ce9c" name="mile-log:payload-logger"/>
+		<flow-ref doc:name="mile-log:success-response-received" doc:id="f381b199-e969-4f0f-aab2-223083e79978" name="mile-log:success-response-received" />
+	</flow>
+</mule>

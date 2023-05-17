@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:cofww-logger="http://www.mulesoft.org/schema/mule/cofww-logger"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/cofww-logger http://www.mulesoft.org/schema/mule/cofww-logger/current/mule-cofww-logger.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd">
+
+	<!-- This configuration uses default algorithm (AES) and mode (CBC) -->
+	<secure-properties:config
+		name="Secure_Properties_Config"
+		doc:name="Environment-specific Secure Properties Config"
+		doc:id="b64daa35-1683-43f6-84c9-21776df3753a"
+		file="config/config-secured-${mule.env}.yaml"
+		key="${mule.key}" />
+
+	<configuration-properties
+		doc:name="Application Configuration properties"
+		doc:id="4e9071c0-5800-46f3-8031-b1ae639c2256"
+		file="config/config-${mule.env}.yaml" />
+
+	<configuration-properties
+		doc:name="Common Configuration properties"
+		doc:id="8f0a30ee-8023-4aa2-91a3-c8ab1f805c27"
+		file="config/config-common.yaml" />
+	<sftp:config name="SFTP_VV_Config" doc:name="SFTP Config" doc:id="103a5928-5708-4c6d-a412-b2549ff22893" doc:description="delivery-order-valor-victoria-sftp-config">
+		<sftp:connection host="${secure::sftpvv.host}" port="${sftpvv.port}" username="${secure::sftpvv.username}" password="${secure::sftpvv.password}" />
+	</sftp:config>
+	<!-- <sftp:config name="SFTP_BLUME_Config" doc:name="SFTP Config" doc:id="31c95ba6-da75-4cc1-8e7d-cabe15a9f0d3" doc:description="delivery-order-to-blume-sftp-config">
+		<sftp:connection host="${secure::sftpblume.host}" port="${sftpblume.port}" username="${secure::sftpblume.username}" password="${secure::sftpblume.password}" />
+	</sftp:config> -->
+	<http:request-config name="orders-papi-http" doc:name="HTTP Request configuration" doc:id="7769ea25-8405-44b4-8597-3504a2c9e6fd" >
+		<http:request-connection protocol="HTTPS" host="${httpRequest.host}" port="${httpRequest.port}" />
+	</http:request-config>
+	<import doc:name="Import" doc:id="30db7290-aa35-4786-b63d-fde115bad648" doc:description="error-handler" file="error-handler.xml" />
+	<import doc:name="Import" doc:id="10b93db1-b5d2-490a-b1f7-71ee39333af8" doc:description="mule-common-logging" file="mule-common-logging.xml" />
+	<import doc:name="Import" doc:id="979b99e4-db37-4a21-be51-9c4ff4066347" doc:description="common-global" file="common-global.xml" />
+	
+
+	<api-gateway:autodiscovery apiId="${api.id}"
+		doc:name="API Autodiscovery"
+		doc:id="99fac178-73f2-484b-8821-be13d2c2201a" flowRef="sftp-sapi-main"
+		ignoreBasePath="true" />
+	<http:listener-config name="http-listener-config">
+        <http:listener-connection host="${https.host}" port="${https.port}" protocol="HTTPS" tlsContext="tls-vv"/>
+    </http:listener-config>
+     <apikit:config name="sftp-sapi-config" api="sftp-sapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <tls:context name="tls-vv" doc:name="TLS Context" doc:id="7f72c6df-ffff-4118-a0c0-61c020b33a6e" >
+		<tls:key-store type="jks" path="${tls.path}" alias="${tls.alias}" keyPassword="${secure::tls.keyPassword}" password="${secure::tls.password}" />
+	</tls:context>
+	<configuration doc:name="Configuration" doc:id="18d697b9-eb4a-40bc-8212-21d527682a5c" defaultErrorHandler-ref="error-handler" doc:description="error-handler"/>
+
+
+</mule>

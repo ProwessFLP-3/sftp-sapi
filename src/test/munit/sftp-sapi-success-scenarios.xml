@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="cwm-sapi-success-scenarios.xml" />
+	<munit:test name="delivery-order-edi-file-to-blume" doc:id="0f0055a4-1893-4b72-8c0f-adefa74f58a7" description="Test" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="edi-file-write" doc:id="85fb8a16-9334-42c9-b689-6567885f45c2" processor="sftp:write">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="aebff1c1-fa82-4153-b6f2-8c9d023c5afc" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://dwl-files/bloom-edi-file-write-response.dwl')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Request" doc:id="a6c5dfc3-f973-4b36-a107-d34138bd9ebf" >
+				<munit:payload value="#[output text/plain --- readUrl('classpath://dwl-files/bloom-edi-input-request.dwl')]" mediaType="text/plain" />
+			</munit:set-event>
+			<flow-ref doc:name="post:\orders\blume:text\plain:sftp-sapi-config" doc:id="496c0188-1065-4293-85cb-d3c67f198989" name="post:\orders\blume:text\plain:sftp-sapi-config" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="d7006045-585c-4b76-99e6-50a8562d475a" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="delivery-order-file-read-process" doc:id="c7a88a16-8831-494e-ba74-a49e4b7d4f4c" description="Test" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="edi-file-write" doc:id="73e47012-2968-43fb-b5f9-d533eb3d3bc3" processor="http:request" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="bf0ff11b-0c3d-467a-abb2-3d4057974a75" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://dwl-files/fileread-success-response.dwl')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Request" doc:id="0f9a2285-3278-46fd-a799-cacb214a4eda" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://dwl-files/fileread-input.dwl')]" mediaType="application/json" />
+
+			</munit:set-event>
+			<flow-ref doc:name="deliveryorder-files-process" doc:id="e0e73bac-b329-4696-bebd-7a1a44ea1f2a" name="deliveryorder-files-process" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="383d5908-9088-4360-9018-122788c8c808" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="sftp-sapi-log-failure-response-sent" doc:id="5788ce6f-0378-4bf6-923e-a93cdacadaab" >
+		<munit:execution >
+			<flow-ref doc:name="mile-log:data-enrinchment-failure" doc:id="ba4ea41f-67ba-4cb9-959f-51663df52704" name="mile-log:data-enrinchment-failure" />
+			<flow-ref doc:name="mile-log:filter-criteria-failed" doc:id="c4d680c8-f394-4420-9a32-9bb9a8632032" name="mile-log:filter-criteria-failed" />
+			<flow-ref doc:name="mile-log:failure-response-sent" doc:id="8f0884f5-fd94-4b8f-9841-d9768c08cef3" name="mile-log:failure-response-sent" />
+			<flow-ref doc:name="mile-log:failure-response-received" doc:id="7eb85671-7051-4363-a4e3-8676c641a3de" name="mile-log:failure-response-received" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="9177f3b5-3928-4a15-a9e6-4ea61b006315" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="delivery-order-file-read-console" doc:id="908af976-50e0-4a73-98d6-6a6705f00189" description="Test" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apikit:console" doc:id="2225cce5-50eb-4fab-abfd-c24711935621" processor="apikit:console" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sftp-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json --- readUrl('classpath://dwl-files/fileread-success-response.dwl')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="sftp-sapi-console" doc:id="5a21f691-8bb7-4f98-bbdc-e10260706ef2" name="sftp-sapi-console" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="b24bf1be-43ab-4895-8fe0-61e9cad37ec7" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

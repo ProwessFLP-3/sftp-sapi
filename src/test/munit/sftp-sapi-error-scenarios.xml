@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="cwm-sapi-error-scenarios.xml" />
+	<munit:test name="BAD_REQUEST" doc:id="67358e68-3d5c-438c-b188-d7e9f980ff17" description="Test" expectedErrorType="APIKIT:BAD_REQUEST">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apikit:router" doc:id="e6fc86b0-ed92-4c6d-93cb-598e9696dd56" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sftp-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:BAD_REQUEST" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="sftp-sapi-main" doc:id="ca2f27f9-5d51-447f-b109-9854c9efab67" name="sftp-sapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="22ae46e6-a421-4023-a813-4c8b1d71edac" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="METHOD_NOT_ALLOWED" doc:id="99541434-493b-4c0a-b5ff-66d00a4ffac6" description="Test" expectedErrorType="APIKIT:METHOD_NOT_ALLOWED" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apikit:router" doc:id="6a7c77a3-f737-4350-a7ea-6f63c1dda1cc" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sftp-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:METHOD_NOT_ALLOWED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="sftp-sapi-main" doc:id="29879375-a93a-470d-a360-5afde4aa6881" name="sftp-sapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="93224635-7752-44c2-acee-3dc97d920c3f" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="NOT_ACCEPTABLE" doc:id="a917444f-dc9e-4a54-8e1c-2d12278bed0a" description="Test" expectedErrorType="APIKIT:NOT_ACCEPTABLE" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apikit:router" doc:id="22b94bc2-cc94-4e80-9bc4-dc75f681e445" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sftp-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_ACCEPTABLE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="sftp-sapi-main" doc:id="9d8da555-4113-4b05-864f-d18a7548d292" name="sftp-sapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="b1bbfc77-136d-48a0-861d-8d73ab6b4427" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="NOT_FOUND" doc:id="8bbcc4a3-5798-4547-98a0-3c63d595b5cb" description="Test" expectedErrorType="APIKIT:NOT_FOUND" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apikit:router" doc:id="13838382-a0e7-4552-aa31-83840f088a04" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sftp-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_FOUND" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="sftp-sapi-main" doc:id="3d64f657-cbef-49ee-a80a-321a39f92f5c" name="sftp-sapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="f0da26f2-ce9e-4982-83e1-c20fada9bd54" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="NOT_IMPLEMENTED" doc:id="7f9a7baf-1b5d-4215-9085-b0b7b52ce6d7" description="Test" expectedErrorType="APIKIT:NOT_IMPLEMENTED" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apikit:router" doc:id="e5f1f23d-3a6d-42c6-bb4d-10ccbb8974f1" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sftp-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_IMPLEMENTED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="sftp-sapi-main" doc:id="0ed78174-06c3-45dd-9086-708e8dc639ab" name="sftp-sapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="1c1e12dc-27b4-4a06-a2b7-9dd328cd35ab" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="UNSUPPORTED_MEDIA_TYPE" doc:id="1aae9948-7b96-432c-9c9d-b27e7cc45034" description="Test" expectedErrorType="APIKIT:UNSUPPORTED_MEDIA_TYPE" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apikit:router" doc:id="8dec4c8c-6845-4e7a-b461-33153724881e" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sftp-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:UNSUPPORTED_MEDIA_TYPE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="sftp-sapi-main" doc:id="c0dd002b-d7b5-4e94-a65c-8d56c291eec0" name="sftp-sapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="8e871c47-8018-44f7-871b-071a79fff15f" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="FORBIDDEN" doc:id="eb435460-43c5-4d5e-adf8-89bba424f8ad" description="Test" expectedErrorType="HTTP:FORBIDDEN" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apikit:router" doc:id="42869c98-46da-43ab-a9f3-d9907d19b944" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sftp-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="HTTP:FORBIDDEN" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="sftp-sapi-main" doc:id="ac112d6f-5dfd-409d-ae99-30202d222835" name="sftp-sapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="ebccf9fc-9b95-48d8-ae3e-35ada2dbba73" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="CONNECTIVITY" doc:id="ad8e4fac-ca83-406e-84f4-97bbee4eeb8b" description="Test" expectedErrorType="HTTP:CONNECTIVITY" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apikit:router" doc:id="12af8adc-4b1a-4593-8118-ecc2d9b7c1ec" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sftp-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="HTTP:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="sftp-sapi-main" doc:id="c30cc9a9-ddfe-40ba-a6ab-6b5f5765a07a" name="sftp-sapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="5294c373-3bcb-4191-a35e-aef4df516c66" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="UNAUTHORIZED" doc:id="d293fc14-33ab-403e-b5ca-2ceb4cc8fabb" description="Test" expectedErrorType="HTTP:UNAUTHORIZED" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apikit:router" doc:id="6706c3a4-cc8b-4495-8c6a-714bf36d19d8" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sftp-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="HTTP:UNAUTHORIZED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="sftp-sapi-main" doc:id="37727eb4-51c2-4dce-b966-b124fb3bfa5d" name="sftp-sapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="b9c2c01f-a668-4efc-98e3-fde9e51b902f" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="INTERNAL_SERVER_ERROR" doc:id="02c32714-aa2e-469a-8101-77ac17399fb2" description="Test" expectedErrorType="HTTP:INTERNAL_SERVER_ERROR" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apikit:router" doc:id="48b705d9-c298-4ceb-aefd-77c8d6ba1ba8" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sftp-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="HTTP:INTERNAL_SERVER_ERROR" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="sftp-sapi-main" doc:id="e5f7f437-aff8-4f32-ae3e-5e3a58e95306" name="sftp-sapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="23541579-6103-4906-a14f-a5665b856a02" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="ANY" doc:id="1e4c3d34-32a3-4b96-b418-07f0cf4bdb20" description="Test" expectedErrorType="APIKIT:ANY" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="apikit:router" doc:id="11d9b64e-d4f7-41df-84de-ae9d70c1d39b" processor="apikit:router" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="sftp-sapi-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:ANY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="sftp-sapi-main" doc:id="1587d24a-f18e-4aa7-8b7d-89fac356b057" name="sftp-sapi-main" />
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="525e5ce5-9e41-4ce3-bc4a-1c1975ea0385" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

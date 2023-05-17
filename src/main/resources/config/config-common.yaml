@@ -1,0 +1,14 @@
+# Common File to be use in All env
+application:
+  name: "sftp-sapi"
+milestone:
+  category: "LOG"
+  
+logger: 
+  source: "Valor-Victoria SFTP location"
+  target: "orders-sapi"
+  businessProcessName: "VALOR VICTORIA"
+  blumeSource: "orders-papi"
+  blumeTarget: "Blume sys-api"
+  blumeFileWrite: "Blume SFTP location"
+  

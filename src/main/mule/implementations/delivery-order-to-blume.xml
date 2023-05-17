@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd">
+	<flow name="delivery-order-to-blume-flow" doc:id="2b5dd655-01b0-48f6-946c-de3d619a12d4" >
+		<ee:transform doc:name="logger inputPayload" doc:id="aeaeab90-2710-47b3-b0fa-e13c3b82847d" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable resource="dwl/edi-inputPayload.dwl" variableName="inputPayload" />
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="mile-log:request-received" doc:id="6c511962-96f6-4ae3-85c4-331c5aabee51" name="mile-log:request-received"/>
+		<flow-ref doc:name="mile-log:payload-logger" doc:id="0298d1a2-fbbd-4375-8445-fa57c345c1ba" name="mile-log:payload-logger"/>
+		<ee:transform doc:name="Set EDI Content" doc:id="6aba628e-d677-4fcf-9f44-6f6502e6620f" >
+			<ee:message >
+				<ee:set-payload resource="dwl/edi-payload.dwl" />
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="blume-file-write-flow" doc:id="657ade57-af72-47d3-bd12-c1fe1c9d98f7" name="blume-file-write-flow"/>
+		<ee:transform doc:name="Set Response" doc:id="05f33a14-f91c-424b-8d56-bbaf2798c05a" >
+			<ee:message >
+				<ee:set-payload resource="dwl/edi-success-response.dwl" />
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="logger inputPayload" doc:id="518bcba2-cba4-4b69-890d-77edf73ba134">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable resource="dwl/edi-inputpayload-success-response-sent.dwl" variableName="inputPayload" />
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="mile-log:payload-logger" doc:id="1cc81eb1-35ae-498d-90b4-7447defb5998" name="mile-log:payload-logger" />
+		<flow-ref doc:name="mile-log:success-response-sent" doc:id="afad01a4-82f3-4f9f-96fb-3ccbb048eead" name="mile-log:success-response-sent"/>
+	</flow>
+</mule>

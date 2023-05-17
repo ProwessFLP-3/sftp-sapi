@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:sftp="http://www.mulesoft.org/schema/mule/sftp"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/sftp http://www.mulesoft.org/schema/mule/sftp/current/mule-sftp.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="blume-file-write-flow" doc:id="a09255c7-1d69-438b-8889-b5651ecf3420" >
+		<ee:transform doc:name="logger inputPayload" doc:id="2b2d37fc-93b5-419f-9a34-03be82033393" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable resource="dwl/edi-inputPayload-request-sent.dwl" variableName="inputPayload" />
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="mile-log:request-sent" doc:id="462e055d-c377-405c-bc00-7f142fe9940d" name="mile-log:request-sent"/>
+		<flow-ref doc:name="mile-log:payload-logger" doc:id="d1467b37-cc3d-409b-8938-233bfdda74fb" name="mile-log:payload-logger" />
+		<sftp:write doc:name="Write EDI File" doc:id="aebff1c1-fa82-4153-b6f2-8c9d023c5afc" config-ref="SFTP_VV_Config" path="#[Mule::p('sftpvv.blumeFilePathWrite') ++ attributes.queryParams.orderNumber ++ &quot;.edi&quot;]" createParentDirectories="false" mode="CREATE_NEW" >
+		</sftp:write>
+		<ee:transform doc:name="logger inputPayload" doc:id="f80ab64e-99e3-453f-95ff-77ae6593304b">
+			<ee:message />
+			<ee:variables>
+				<ee:set-variable resource="dwl/edi-inputPayload-success-response-received.dwl" variableName="inputPayload" />
+			</ee:variables>
+		</ee:transform>
+		<flow-ref doc:name="mile-log:payload-logger" doc:id="5a7ec34a-b28b-4e06-b293-72064fb8c438" name="mile-log:payload-logger" />
+		<flow-ref doc:name="mile-log:success-response-received" doc:id="9e00fb50-2922-4a2c-8be4-6319bef4e798" name="mile-log:success-response-received"/>
+	</sub-flow>
+</mule>

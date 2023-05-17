@@ -1,0 +1,38 @@
+api:
+  id: "18672057"  
+
+http:
+  host: "0.0.0.0"
+  port: "8081"
+  
+https:
+  host: "0.0.0.0"
+  port: "8082"
+
+tls:
+  type: "JKS"
+  path: "cert/vv-mule-cert-dev.jks"
+  alias: "vv-mule-cert"
+  
+sftpvv:
+  port: "22"
+  filePathRead: "/DEV/babelway/deliveryorder/"
+  filePathSuccess: "/DEV/babelway/deliveryorder/success/"
+  filePathFailed: "/DEV/babelway/deliveryorder/failed/"
+  blumeFilePathWrite: "/DEV/blume/deliveryorder/"
+  
+sftpblume:
+  port: "22"
+  filePathWrite: "/DEV/blume/deliveryorder/"
+  
+onNewOrUpdateFile:
+  frequency: "5"
+
+httpRequest:
+  host: "vv-orders-papi-dev.us-e1.cloudhub.io"
+  port: "443"
+  pathDeliveryOrders: "/api/orders"
+  method: "post"
+  responseTimeout: "30000"
+  frequency: "2000"
+  retryCount: "2"

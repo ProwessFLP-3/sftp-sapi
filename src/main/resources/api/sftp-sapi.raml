@@ -1,0 +1,33 @@
+#%RAML 1.0
+title: sftp-sapi
+description: New delivery order to bloom
+
+version: v1
+
+types:
+  common-error-response: !include /exchange_modules/3d244ed7-6ddf-49a9-be6d-96e22048cbc0/vv-common-traits/1.0.2/types/error-response-type.raml
+
+traits:
+  correlation-id: !include /exchange_modules/3d244ed7-6ddf-49a9-be6d-96e22048cbc0/vv-common-traits/1.0.2/traits/transaction-id.raml
+
+
+/orders/blume:
+  post:
+    is: [correlation-id]
+    queryParameters: 
+      orderNumber:
+        description: unique order number
+        type: string
+        required: true
+    body:
+      text/plain:
+        type: string
+        example: "EDI teXt"
+    responses:
+      200:
+        body:
+          application/json:
+            example: {
+              "success": 201,
+              "message": "Written file successfully"
+            }
